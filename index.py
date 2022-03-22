@@ -1,61 +1,145 @@
-import pygame, sys, random
-from enemy import * 
-
-
-size  = (800, 500)
-
-lista_meter = []
-
-RED = (255, 51, 81)
-WHITE = (250, 250, 250)
-BLACK = (10, 10, 10)
+from funciones_enemy import *
+from escenario import *
+import pygame
+pygame.init()
 
 
 
+numero = 60
+WHITE = (255, 255, 255)
 
-for i in range (30):
-    size = random.randint(10, 20)
-    velocidad_x = random.uniform(-1 ,1)
-    velocidad_y = random.randint(1,3)
-    position_x = random.randint(100,900)
-    position_y = random.randint(0,100)
-    color = RED
-    meter = meterorito(size, velocidad_x, velocidad_y,color, position_x, position_y)
-    lista_meter.append(meter)
+
+
+# def explosion(position_x, position_y):
     
-    
+#         pr = pygame.draw.circle(screen,RED,(position_x, position_y),8)
+#         pr = pygame.draw.circle(screen,RED,(position_x, position_y),8)
+#         pr = pygame.draw.circle(screen,RED,(position_x, position_y),8)
+#         pr = pygame.draw.circle(screen,RED,(position_x, position_y),8)
+#         pr = pygame.draw.circle(screen,RED,(position_x, position_y),8)
+#         pr_list.append(pr)
 
+  
+
+
+BLACK = (0,0,0)
+
+disparo = bool
+ancho = 1000
+alto = 600
+size = (ancho, alto)
+screen = pygame.display.set_mode(size)
+nave = 60
+crear = 20
+tinicial = 0
+tfinal = 0
+inicio = 20
+crear_meteroritos(numero)
 clock = pygame.time.Clock()
-screen = pygame.display.set_mode((1000, 600))
+aux = 1
+correr = True
+supreme = 60
 
+escenaro()
 
-while True:
+while correr:
+    tiempo = int(pygame.time.get_ticks()/ 1000)
+    if aux == tiempo:
+        print(tiempo)
+        aux += 1
+        disparo = True
+    clock.tick(30)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            sys.exit()
+            correr = False
 
-    
-    screen.fill(WHITE)
+    screen.fill(BLACK)
 
-    for meter in lista_meter:
-        pygame.draw.circle(screen,meter.color,(meter.position_x, meter.position_y), meter.size)  
-        meter.position_x += meter.velocidad_x
-        meter.position_y += meter.velocidad_y
+    for punto in all_puntos:
         
-        if meter.position_y > 620:
-            meter.position_y = 0
-            meter.velocidad_y = random.randint(1 , 4)
+        pygame.draw.circle(screen,WHITE,(punto.posicion_x,punto.posicion_y),punto.grosor)
+        punto.mover()
 
-        if meter.position_x > 1000 or position_x < 0:
-            meter.position_x = random.randint(100,900)
+        
+       
 
+    all_list_meteoritos.draw(screen)
+    
+    
+    for meter in all_list_meteoritos:
+        meter.mover()
+    
+    
+    all_list_asteroides.draw(screen)
+    for aster in all_list_asteroides:
+        aster.movimiento()
+        
+    all_list_nave_enemiga.draw(screen)
+    for nave in all_list_nave_enemiga:
+      
+        nave.movimiento_nave()
 
+    all_list_balas.draw(screen)
+    
+        # nave.chocar(tiempo)
+        # print(nave.rect.y)
+        # if nave.rect.x == player.posicion_x:
+        #     nave.disparar()
+    
+    #         print(aster.rect.y)
+    # if tiempo > 30 and tiempo < 35:
+    #     all_list_asteroides.draw(screen)
+    #     for aster in all_list_asteroides:
+    #         aster.movimiento()
 
-
-    pygame.display.flip()
-    clock.tick(30)
+    # if tiempo == inicio:
+        
+    #     tinicial += 20
+    #     tfinal = tinicial + 15
+    #     inicio += 20
+        
+    if tiempo == crear:
+        crear_asteroides(6)
+        crear += 20
+        
+    if tiempo == nave:
+        crear_naves_enemigas()
+        entrada_nave = nave + 20
+        final_nave = entrada_nave + 20
+        nave+= 60
     
 
+    if tiempo == supreme:
+        entrada_nave = supreme + 20
+        final_nave = entrada_nave + 5
+        supreme += 60
+        
+
+    for nave in all_list_nave_enemiga:
+        nave.chocar(tiempo, entrada_nave, final_nave)
+        if nave.rect.y == 60:
+            if disparo: 
+                bala_disparada(nave.rect.centerx, nave.rect.centery, 15)
+                disparo = False
+
+
+    for balas in all_list_balas:
+        balas.mover()
+        
+    # if tiempo > nave and tiempo > :
+    #     for nave in all_list_nave_enemiga:
+    #         nave.velocidad_x = 0
+    #         nave.velocidad_y = 10
+    #         nave.rect.y += 81
+            
+
+    
+    pygame.display.flip()
+
+
+
+
+pygame.quit()
   
 
     
